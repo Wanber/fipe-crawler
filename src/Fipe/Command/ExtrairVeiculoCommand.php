@@ -319,7 +319,7 @@ class ExtrairVeiculoCommand extends Command
         foreach ($modelos as $marcaId => $marcaModelos) {
             foreach ($marcaModelos as $modelo) {
                 //if($modelo['id'] != 2418) continue; // FIXME remover
-                $tmpVeiculos  = $crawler->extractVeiculos($tabela['id'], $tipo, $marcaId, $modelo['id'], true);
+                $tmpVeiculos  = $crawler->extractVeiculos($output, $this->db, $tabela['id'], $tipo, $marcaId, $modelo['id'], true);
                 $this->db->saveVeiculoCompletos($tmpVeiculos, $output);
                 $totalVeiculos += $tmpVeiculos['veiculosTotal'];
                 $progress->setMessage($totalVeiculos, 'ttvei');

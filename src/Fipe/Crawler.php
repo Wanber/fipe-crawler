@@ -463,7 +463,7 @@ class Crawler
      *
      * @return array
      */
-    public function extractVeiculos($tabelaId, $tipo, $marcaId, $modeloId, $getResult = false)
+    public function extractVeiculos($db, $tabelaId, $tipo, $marcaId, $modeloId, $getResult = false)
     {
         $this->stopwatch->start('progress');
         $results = array();
@@ -484,7 +484,9 @@ class Crawler
                 'ano'  => $ano,
             );
 
-            if (!$veiculo = $this->getVeiculo(
+            $exists = $db->checkExists($tabelaId, $tipo, $marcaId, $modeloId, $anoModelo, $comb);
+
+            if ($exists || !$veiculo = $this->getVeiculo(
                 $tabelaId,
                 $tipo,
                 $marcaId,

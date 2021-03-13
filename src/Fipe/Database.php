@@ -298,6 +298,28 @@ class Database
         return $results;
     }
 
+    public function checkExists($tabelaId, $tipo, $marcaId, $modeloId, $anoModelo, $combId)
+    {
+        $sql = "SELECT id FROM veiculo " . " WHERE tabela_id = :tabela_id AND tipo = :tipo AND marca_id = :marca_id AND modelo_id = :modelo_id AND anomod = :anomod AND comb_cod = :comb_cod LIMIT 1;";
+        $stmt = $this->conn->prepare(
+            $sql,
+            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
+        );
+
+        $stmt->execute(
+            array(
+                ':tabela_id' => $tabelaId,
+                ':tipo' => $tipo,
+                ':marca_id' => $marcaId,
+                ':modelo_id' => $modeloId,
+                ':anomod' => $anoModelo,
+                ':comb_cod' => $combId
+            )
+        );
+
+        return sizeof($stmt->fetchAll(\PDO::FETCH_ASSOC)) > 0;
+    }
+
     /**
      * Salva veiculos completos
      *
