@@ -298,6 +298,7 @@ class ExtrairVeiculoCommand extends Command
         $progress->start();
         $modelos = array();
         foreach ($marcas['results'] as $marca) {
+            //if($marca['id'] != 59) continue; // FIXME remover
             $tmpModelos = $crawler->extractModelos($tabela['id'], $tipo, $marca['id']);
             $modelos[$marca['id']] = $tmpModelos['results'];
             $totalModelos += count($tmpModelos['results']);
@@ -317,8 +318,9 @@ class ExtrairVeiculoCommand extends Command
         $progress->start();
         foreach ($modelos as $marcaId => $marcaModelos) {
             foreach ($marcaModelos as $modelo) {
+                //if($modelo['id'] != 2418) continue; // FIXME remover
                 $tmpVeiculos  = $crawler->extractVeiculos($tabela['id'], $tipo, $marcaId, $modelo['id'], true);
-                $this->db->saveVeiculoCompletos($tmpVeiculos);
+                $this->db->saveVeiculoCompletos($tmpVeiculos, $output);
                 $totalVeiculos += $tmpVeiculos['veiculosTotal'];
                 $progress->setMessage($totalVeiculos, 'ttvei');
                 $progress->advance();

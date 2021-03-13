@@ -506,20 +506,20 @@ class Crawler
             $anoref = isset($tmpMes[2]) ? trim($tmpMes[2]) : '';
 
             $results[] = array(
-                'tabela_id'  => $tabelaId,
-                'anoref'     => $anoref,
-                'mesref'     => $mesref,
-                'tipo'       => $tipo,
-                'fipe_cod'   => trim($veiculo['CodigoFipe']),
-                'marca_id'   => $marcaId,
-                'marca'      => trim($veiculo['Marca']),
-                'modelo_id'  => $modeloId,
-                'modelo'     => trim($veiculo['Modelo']),
-                'anomod'     => trim($veiculo['AnoModelo']),
-                'comb_cod'   => $comb,
-                'comb_sigla' => trim($veiculo['SiglaCombustivel']),
-                'comb'       => Database::$combustiveis[$comb],
-                'valor'      => $valor,
+                'tabela_id' => utf8_decode($tabelaId),
+                'anoref' => utf8_decode($anoref),
+                'mesref' => utf8_decode($mesref),
+                'tipo' => utf8_decode($tipo),
+                'fipe_cod' => utf8_decode(trim($veiculo['CodigoFipe'])),
+                'marca_id' => utf8_decode($marcaId),
+                'marca' => utf8_decode(trim($veiculo['Marca'])),
+                'modelo_id' => utf8_decode($modeloId),
+                'modelo' => utf8_decode(trim($veiculo['Modelo'])),
+                'anomod' => utf8_decode(trim($veiculo['AnoModelo'])),
+                'comb_cod' => utf8_decode($comb),
+                'comb_sigla' => utf8_decode(Database::$sigla_combustiveis[$veiculo['SiglaCombustivel']]),
+                'comb' => utf8_decode(Database::$combustiveis[$comb]),
+                'valor' => utf8_decode($valor),
             );
         }
         $event = $this->stopwatch->stop('progress');

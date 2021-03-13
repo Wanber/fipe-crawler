@@ -36,18 +36,18 @@ class Database
      * @var array
      */
     public static $meses = array(
-        'janeiro'   => '01',
+        'janeiro' => '01',
         'fevereiro' => '02',
-        'março'     => '03',
-        'abril'     => '04',
-        'maio'      => '05',
-        'junho'     => '06',
-        'julho'     => '07',
-        'agosto'    => '08',
-        'setembro'  => '09',
-        'outubro'   => '10',
-        'novembro'  => '11',
-        'dezembro'  => '12',
+        'março' => '03',
+        'abril' => '04',
+        'maio' => '05',
+        'junho' => '06',
+        'julho' => '07',
+        'agosto' => '08',
+        'setembro' => '09',
+        'outubro' => '10',
+        'novembro' => '11',
+        'dezembro' => '12',
     );
 
     /**
@@ -60,6 +60,18 @@ class Database
         2 => 'Álcool',
         3 => 'Diesel',
         4 => 'Flex',
+    );
+
+    /**
+     * Sigla Combustíveis
+     *
+     * @var array
+     */
+    public static $sigla_combustiveis = array(
+        'G' => 'G',
+        'Á' => 'A',
+        'D' => 'D',
+        'F' => 'F',
     );
 
     /**
@@ -76,10 +88,10 @@ class Database
     /**
      * Construtor
      *
-     * @param string $host   Servidor
+     * @param string $host Servidor
      * @param string $dbname Nome do banco
-     * @param string $user   Usuário
-     * @param string $pass   Senha
+     * @param string $user Usuário
+     * @param string $pass Senha
      *
      * @return void
      */
@@ -89,7 +101,7 @@ class Database
         try {
             $this->conn = new \PDO($dsn, $user, $pass);
         } catch (PDOException $e) {
-            echo 'Connection failed: '.$e->getMessage();
+            echo 'Connection failed: ' . $e->getMessage();
         }
     }
 
@@ -104,7 +116,7 @@ class Database
     {
         $results = array();
 
-        $sql = "INSERT INTO tabela (id, desc, ano, mes) "."VALUES (:id, :desc, :ano, :mes);";
+        $sql = "INSERT INTO tabela (id, desc, ano, mes) " . "VALUES (:id, :desc, :ano, :mes);";
         $stmt = $this->conn->prepare(
             $sql,
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
@@ -116,10 +128,10 @@ class Database
             $mesesFlip = array_flip(self::$meses);
 
             $record = array(
-                ':id'   => $id,
+                ':id' => $id,
                 ':desc' => "{$mesesFlip[$mes]}/{$ano}",
-                ':ano'  => $ano,
-                ':mes'  => $mes,
+                ':ano' => $ano,
+                ':mes' => $mes,
             );
             $stmt->execute($record);
             $results[] = $record;
@@ -131,8 +143,8 @@ class Database
     /**
      * Salva marcas
      *
-     * @param array  $marcas Marcas
-     * @param string $tipo   Tipo
+     * @param array $marcas Marcas
+     * @param string $tipo Tipo
      *
      * @return array
      */
@@ -140,14 +152,14 @@ class Database
     {
         $results = array();
 
-        $sql = "INSERT INTO marca (id, desc, tipo) "."VALUES (:id, :desc, :tipo);";
+        $sql = "INSERT INTO marca (id, desc, tipo) " . "VALUES (:id, :desc, :tipo);";
         $stmt = $this->conn->prepare(
             $sql,
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
         foreach ($marcas as $id => $desc) {
             $record = array(
-                ':id'   => $id,
+                ':id' => $id,
                 ':desc' => $desc,
                 ':tipo' => $tipo,
             );
@@ -162,7 +174,7 @@ class Database
     /**
      * Salva modelos
      *
-     * @param array   $modelos Modelos
+     * @param array $modelos Modelos
      * @param integer $marcaId Id da Marca
      *
      * @return array
@@ -171,16 +183,16 @@ class Database
     {
         $results = array();
 
-        $sql = "INSERT INTO modelo (id, marca_id, desc) "."VALUES (:id, :marca_id, :desc);";
+        $sql = "INSERT INTO modelo (id, marca_id, desc) " . "VALUES (:id, :marca_id, :desc);";
         $stmt = $this->conn->prepare(
             $sql,
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
         foreach ($modelos as $id => $desc) {
             $record = array(
-                ':id'       => $id,
+                ':id' => $id,
                 ':marca_id' => $marcaId,
-                ':desc'     => $desc,
+                ':desc' => $desc,
             );
             $stmt->execute($record);
             $record = $this->cleanRecord($record);
@@ -193,9 +205,9 @@ class Database
     /**
      * Salva ano/modelo
      *
-     * @param array   $anoMods  Ano modelos
+     * @param array $anoMods Ano modelos
      * @param integer $tabelaId Tabela Id
-     * @param integer $marcaId  Marca Id
+     * @param integer $marcaId Marca Id
      * @param integer $modeloId Modelo Id
      *
      * @return array
@@ -204,29 +216,29 @@ class Database
     {
         $results = array();
 
-        $sql = "INSERT INTO anomod (modelo_id, desc, anomod_cod, ano, comb, comb_cod) "."VALUES (:modelo_id, :desc, :anomod_cod, :ano, :comb, :comb_cod);";
+        $sql = "INSERT INTO anomod (modelo_id, desc, anomod_cod, ano, comb, comb_cod) " . "VALUES (:modelo_id, :desc, :anomod_cod, :ano, :comb, :comb_cod);";
         $stmt = $this->conn->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
-        $sqlRef = "INSERT INTO ref_tab_mar_mod_ano (tabela_id, marca_id, modelo_id, anomod_id) "."VALUES (:tabela_id, :marca_id, :modelo_id, :anomod_id);";
+        $sqlRef = "INSERT INTO ref_tab_mar_mod_ano (tabela_id, marca_id, modelo_id, anomod_id) " . "VALUES (:tabela_id, :marca_id, :modelo_id, :anomod_id);";
         $stmtRef = $this->conn->prepare(
             $sqlRef,
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
 
         foreach ($anoMods as $anoMod => $desc) {
-            $tmp      = explode('-', $anoMod);
-            $ano      = $tmp[0];
-            $combCod  = $tmp[1];
-            $comb     = array_key_exists($combCod, self::$combustiveis)
-                      ? self::$combustiveis[$combCod]
-                      : 0;
+            $tmp = explode('-', $anoMod);
+            $ano = $tmp[0];
+            $combCod = $tmp[1];
+            $comb = array_key_exists($combCod, self::$combustiveis)
+                ? self::$combustiveis[$combCod]
+                : 0;
             $record = array(
-                ':modelo_id'  => $modeloId,
-                ':desc'       => $desc,
+                ':modelo_id' => $modeloId,
+                ':desc' => $desc,
                 ':anomod_cod' => $anoMod,
-                ':ano'        => $ano,
-                ':comb'       => $comb,
-                ':comb_cod'   => $combCod,
+                ':ano' => $ano,
+                ':comb' => $comb,
+                ':comb_cod' => $combCod,
             );
             $stmt->execute($record);
             $record = $this->cleanRecord($record);
@@ -236,7 +248,7 @@ class Database
             $stmtRef->execute(
                 array(
                     ':tabela_id' => $tabelaId,
-                    ':marca_id'  => $marcaId,
+                    ':marca_id' => $marcaId,
                     ':modelo_id' => $modeloId,
                     ':anomod_id' => $record['id'],
                 )
@@ -249,7 +261,7 @@ class Database
     /**
      * Salva veiculos
      *
-     * @param array  $veiculos Veiculos
+     * @param array $veiculos Veiculos
      * @param string $anoModId Ano Modelo Id
      *
      * @return array
@@ -258,29 +270,29 @@ class Database
     {
         $results = array();
 
-        $sql = "INSERT INTO veiculo (fipe_cod, tabela_id, marca_id, anomod_id, tipo, modelo, comb_cod, comb_sigla, comb, valor) "."VALUES (:fipe_cod, :tabela_id, :marca_id, :anomod_id, :tipo, :modelo, :comb_cod, :comb_sigla, :comb, :valor);";
+        $sql = "INSERT INTO veiculo (fipe_cod, tabela_id, marca_id, anomod_id, tipo, modelo, comb_cod, comb_sigla, comb, valor) " . "VALUES (:fipe_cod, :tabela_id, :marca_id, :anomod_id, :tipo, :modelo, :comb_cod, :comb_sigla, :comb, :valor);";
         $stmt = $this->conn->prepare(
             $sql,
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
         foreach ($veiculos as $id => $veiculo) {
             $record = array(
-                ':fipe_cod'   => $veiculo['fipe_cod'],
-                ':tabela_id'  => $veiculo['tabela_id'],
-                ':marca_id'   => $veiculo['marca_id'],
-                ':anomod_id'  => $anoModId,
-                ':tipo'       => $veiculo['tipo'],
-                ':modelo'     => $veiculo['modelo'],
-                ':comb_cod'   => $veiculo['comb_cod'],
+                ':fipe_cod' => $veiculo['fipe_cod'],
+                ':tabela_id' => $veiculo['tabela_id'],
+                ':marca_id' => $veiculo['marca_id'],
+                ':anomod_id' => $anoModId,
+                ':tipo' => $veiculo['tipo'],
+                ':modelo' => $veiculo['modelo'],
+                ':comb_cod' => $veiculo['comb_cod'],
                 ':comb_sigla' => $veiculo['comb_sigla'],
-                ':comb'       => $veiculo['comb'],
-                ':valor'      => $veiculo['valor'],
+                ':comb' => $veiculo['comb'],
+                ':valor' => $veiculo['valor'],
             );
             $stmt->execute($record);
 
             $record = $this->cleanRecord($record);
             $record['id'] = $this->conn->lastInsertId();
-            $results[]    = $record;
+            $results[] = $record;
         }
 
         return $results;
@@ -293,11 +305,11 @@ class Database
      *
      * @return array
      */
-    public function saveVeiculoCompletos(array $veiculos)
+    public function saveVeiculoCompletos(array $veiculos, $output)
     {
         $results = array();
 
-        $sql = "INSERT INTO veiculo (fipe_cod, tabela_id, anoref, mesref, tipo, marca_id, marca, modelo_id, modelo, anomod, comb_cod, comb_sigla, comb, valor) "."VALUES (:fipe_cod, :tabela_id, :anoref, :mesref, :tipo, :marca_id, :marca, :modelo_id, :modelo, :anomod, :comb_cod,:comb_sigla, :comb, :valor);";
+        $sql = "INSERT INTO veiculo (fipe_cod, tabela_id, anoref, mesref, tipo, marca_id, marca, modelo_id, modelo, anomod, comb_cod, comb_sigla, comb, valor) " . "VALUES (:fipe_cod, :tabela_id, :anoref, :mesref, :tipo, :marca_id, :marca, :modelo_id, :modelo, :anomod, :comb_cod,:comb_sigla, :comb, :valor);";
         $stmt = $this->conn->prepare(
             $sql,
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
@@ -306,10 +318,19 @@ class Database
             try {
                 $record = $this->prepareParameters($veiculo);
                 $stmt->execute($record);
-                $veiculo['id'] = $this->conn->lastInsertId();
-                $results[]     = $veiculo;
+                $errCode = $stmt->errorCode();
+
+                if ($errCode == 0) {
+                    $veiculo['id'] = $this->conn->lastInsertId();
+                    $results[] = $veiculo;
+                } else if ($errCode == 23000) {
+                    // veicula já existe, nada a fazer
+                } else {
+                    $strErr = print_r($stmt->errorInfo(), true);
+                    $output->writeln("<error>Erro: {$strErr}</error>");
+                }
             } catch (\Exception $e) {
-                // Ignore
+                $output->writeln("<error>Erro: {$e->getMessage()}</error>");
             }
         }
 
@@ -321,13 +342,14 @@ class Database
      *
      * @param string $anoref Ano referência
      * @param string $mesref Mês referência
-     * @param string $tipo   Tipo
+     * @param string $tipo Tipo
      *
      * @return array
      */
-    public function findVeiculos($anoref, $mesref, $tipo)
+    public
+    function findVeiculos($anoref, $mesref, $tipo)
     {
-        $sql = "SELECT * FROM veiculo "." WHERE anoref = :anoref AND mesref = :mesref AND tipo = :tipo;";
+        $sql = "SELECT * FROM veiculo " . " WHERE anoref = :anoref AND mesref = :mesref AND tipo = :tipo;";
         $stmt = $this->conn->prepare(
             $sql,
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
@@ -335,9 +357,9 @@ class Database
 
         $stmt->execute(
             array(
-                ':anoref' => (int) $anoref,
-                ':mesref' => (int) $mesref,
-                ':tipo'   => (int) $tipo,
+                ':anoref' => (int)$anoref,
+                ':mesref' => (int)$mesref,
+                ':tipo' => (int)$tipo,
             )
         );
 
@@ -347,13 +369,14 @@ class Database
     /**
      * Recupera cabeçalho para CSV
      *
-     * @param array   $row       Linha de registro
-     * @param boolean $noId      Sem Id
-     * @param string  $separator Separador
+     * @param array $row Linha de registro
+     * @param boolean $noId Sem Id
+     * @param string $separator Separador
      *
      * @return string
      */
-    public function getCsvHeader($row, $noId = false, $separator = ',')
+    public
+    function getCsvHeader($row, $noId = false, $separator = ',')
     {
         $row = $this->getCsvHeaderArray($row, $noId);
 
@@ -363,12 +386,13 @@ class Database
     /**
      * Recupera cabeçalho para CSV em array
      *
-     * @param array   $row  Linha de registro
+     * @param array $row Linha de registro
      * @param boolean $noId Sem Id
      *
      * @return array
      */
-    public function getCsvHeaderArray(array $row, $noId = false)
+    public
+    function getCsvHeaderArray(array $row, $noId = false)
     {
         if ($noId) {
             unset($row['id']);
@@ -380,13 +404,14 @@ class Database
     /**
      * Prepara linha para CSV
      *
-     * @param array   $row       Linha de registro
-     * @param boolean $noId      Sem Id
-     * @param string  $separator Separador
+     * @param array $row Linha de registro
+     * @param boolean $noId Sem Id
+     * @param string $separator Separador
      *
      * @return array
      */
-    public function prepareCsvRow($row, $noId = false, $separator = ',')
+    public
+    function prepareCsvRow($row, $noId = false, $separator = ',')
     {
         if ($noId) {
             unset($row['id']);
@@ -400,7 +425,8 @@ class Database
      *
      * @return array
      */
-    public function findTabelas()
+    public
+    function findTabelas()
     {
         $sql = "SELECT DISTINCT tabela_id, anoref, mesref, tipo FROM veiculo ORDER BY anoref DESC, mesref DESC, tipo";
         $stmt = $this->conn->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
@@ -409,11 +435,11 @@ class Database
         $mesesFlip = array_flip(self::$meses);
         $tabelas = array();
         foreach ($tabelasResult as $tab) {
-            $mesref    = str_pad($tab['mesref'], 2, '0', STR_PAD_LEFT);
-            $mesref    = $mesesFlip[$mesref];
+            $mesref = str_pad($tab['mesref'], 2, '0', STR_PAD_LEFT);
+            $mesref = $mesesFlip[$mesref];
             $tabelas[] = array(
-                'id'  => $tab['tabela_id'].'-'.$tab['tipo'],
-                'lbl' => "{$mesref}/{$tab['anoref']} - ".self::$tipos[$tab['tipo']],
+                'id' => $tab['tabela_id'] . '-' . $tab['tipo'],
+                'lbl' => "{$mesref}/{$tab['anoref']} - " . self::$tipos[$tab['tipo']],
             );
         }
 
@@ -424,11 +450,12 @@ class Database
      * Encontra veículo por tabela e tipo
      *
      * @param integer $tabela A tabela
-     * @param string  $tipo   O tipo
+     * @param string $tipo O tipo
      *
      * @return array
      */
-    public function findVeiculosByTabelaAndTipo($tabela, $tipo)
+    public
+    function findVeiculosByTabelaAndTipo($tabela, $tipo)
     {
         $sql = "SELECT * FROM veiculo WHERE tabela_id = :tabela_id AND tipo = :tipo";
         $stmt = $this->conn->prepare(
@@ -437,15 +464,15 @@ class Database
         );
         $stmt->execute(
             array(
-                ':tabela_id'  => $tabela,
-                ':tipo'       => $tipo,
+                ':tabela_id' => $tabela,
+                ':tipo' => $tipo,
             )
         );
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         return array(
             'results' => $results,
-            'header'  => $this->getCsvHeaderArray($results[0]),
+            'header' => $this->getCsvHeaderArray($results[0]),
         );
     }
 
@@ -456,7 +483,8 @@ class Database
      *
      * @return array
      */
-    protected function cleanRecord(array $record)
+    protected
+    function cleanRecord(array $record)
     {
         foreach ($record as $id => $value) {
             $newId = substr($id, 1);
@@ -474,7 +502,8 @@ class Database
      *
      * @return array
      */
-    protected function prepareParameters(array $record)
+    protected
+    function prepareParameters(array $record)
     {
         foreach ($record as $id => $value) {
             $newId = ":{$id}";
